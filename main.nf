@@ -77,8 +77,8 @@ process visualization_results {
         version<-"v26"
         # Load libraries required
         library("dplyr")
-	library("ggpubr")
 	library("ggplot2")
+	library("gridExtra")
 	# Modify data frame with results for plotting
 	df<-readRDS("$expData2")
 	df2 <- as.data.frame(df %>% group_by(predicted) %>% summarise(count = n()) %>% mutate(perc = count/sum(count)))
@@ -106,10 +106,9 @@ process visualization_results {
 	colnames(report)<-NULL
 	rownames(report)<-c("SampleID","Date and Time","Version classifier","Number of cells predicted",
 		"Number of genes used for prediction","% PSC Undifferentiated","% PSC Early differentiated")
-	report<-ggtexttable(report)
 	# Export results
 	pdf("Results_prediction_PSC_state.pdf")
-		ggarrange(report,plot, ncol = 1, nrow = 2)
+	grid.arrange(tableGrob(report),plot,nrow = 2,ncol= 1)
 	dev.off()
 	"""
 }
